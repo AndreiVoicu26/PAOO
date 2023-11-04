@@ -1,7 +1,10 @@
 #include <iostream>
 #include <string>
-#include "Student/Student.hpp"
+#include "People/Student/Student.hpp"
+#include "People/Teacher/Teacher.hpp"
 #include "Subject/Subject.hpp"
+using namespace PeopleNamespace;
+using namespace SubjectNamespace;
 
 int main()
 {
@@ -16,4 +19,16 @@ int main()
     Student student3("Ion", "Popescu", 22);
     student3 = student2;
     student3.display();
+
+    Student tempStudent("Ana", "Maria", 25);
+    tempStudent.addSubject(Subject("History"));
+    Student student4(std::move(tempStudent));
+    student4.display();
+
+    student4.setAge(30);
+    student4.display();
+
+    Subject *subject = new Subject("Math");
+    Teacher teacher("Cosmin", "Ionescu", 43, subject);
+    teacher.display();
 }

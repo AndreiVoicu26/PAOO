@@ -1,4 +1,5 @@
 #include "Subject.hpp"
+using namespace SubjectNamespace;
 
 Subject::Subject(const std::string &name) : name(name){};
 

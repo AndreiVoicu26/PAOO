@@ -1,23 +1,38 @@
 #include <iostream>
 #include "Student.hpp"
-#include "../Subject/Subject.hpp"
+#include "../../Subject/Subject.hpp"
+#include "../Person/Person.cpp"
+using namespace SubjectNamespace;
+using namespace PeopleNamespace;
 
 Student::Student(const std::string &firstName, const std::string &lastName, int age)
-    : firstName(firstName), lastName(lastName), age(age)
+    : Person(firstName, lastName, age)
 {
-    subjects = new std::vector<Subject>();
+    this->subjects = new std::vector<Subject>();
 }
 
 Student::Student(const Student &copy)
 {
+    std::cout << "Copy Constructor called" << std::endl;
     firstName = copy.firstName;
     lastName = copy.lastName;
     age = copy.age;
     subjects = new std::vector<Subject>(*copy.subjects);
 }
 
+Student::Student(Student &&source)
+{
+    std::cout << "Move Constructor called" << std::endl;
+    firstName = std::move(source.firstName);
+    lastName = std::move(source.lastName);
+    age = source.age;
+    subjects = source.subjects;
+    source.subjects = nullptr;
+}
+
 Student &Student::operator=(const Student &ref)
 {
+    std::cout << "Assignment Operator called" << std::endl;
     if (this == &ref)
     {
         return *this;
@@ -31,36 +46,6 @@ Student &Student::operator=(const Student &ref)
 void Student::addSubject(const Subject &subject)
 {
     subjects->push_back(subject);
-}
-
-void Student::setFirstName(const std::string &firstName)
-{
-    this->firstName = firstName;
-}
-
-void Student::setLastName(const std::string &lastName)
-{
-    this->lastName = lastName;
-}
-
-void Student::setAge(int age)
-{
-    this->age = age;
-}
-
-const std::string &Student::getFirstName() const
-{
-    return firstName;
-}
-
-const std::string &Student::getLastName() const
-{
-    return lastName;
-}
-
-int Student::getAge() const
-{
-    return age;
 }
 
 const std::vector<Subject> &Student::getSubjects() const
@@ -77,7 +62,7 @@ void Student::display() const
 
     if (!subjects->empty())
     {
-        std::cout << "Subjects: ";
+        std::cout << "Learns: ";
         for (const Subject &subject : *subjects)
         {
             std::cout << subject.getName() << " ";
@@ -86,7 +71,7 @@ void Student::display() const
     }
     else
     {
-        std::cout << "No subjects" << std::endl;
+        std::cout << "No subjects assigned" << std::endl;
     }
 }
 

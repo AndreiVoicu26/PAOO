@@ -15,6 +15,8 @@ namespace SubjectNamespace
         void setName(const std::string &name);
 
         const std::string &getName() const;
+
+        bool operator<(const Subject &other) const;
     };
 }
 

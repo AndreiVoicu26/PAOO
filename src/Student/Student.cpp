@@ -1,6 +1,6 @@
 #include <iostream>
 #include "Student.hpp"
-#include "../../Subject/Subject.hpp"
+#include "../Subject/Subject.hpp"
 #include "../Person/Person.cpp"
 using namespace SubjectNamespace;
 using namespace PeopleNamespace;
@@ -8,21 +8,19 @@ using namespace PeopleNamespace;
 Student::Student(const std::string &firstName, const std::string &lastName, int age)
     : Person(firstName, lastName, age)
 {
-    this->subjects = new std::vector<Subject>();
+    this->subjects = new std::map<Subject, double>();
 }
 
 Student::Student(const Student &copy)
 {
-    std::cout << "Copy Constructor called" << std::endl;
     firstName = copy.firstName;
     lastName = copy.lastName;
     age = copy.age;
-    subjects = new std::vector<Subject>(*copy.subjects);
+    subjects = new std::map<Subject, double>(*copy.subjects);
 }
 
 Student::Student(Student &&source)
 {
-    std::cout << "Move Constructor called" << std::endl;
     firstName = std::move(source.firstName);
     lastName = std::move(source.lastName);
     age = source.age;
@@ -32,25 +30,35 @@ Student::Student(Student &&source)
 
 Student &Student::operator=(const Student &ref)
 {
-    std::cout << "Assignment Operator called" << std::endl;
     if (this == &ref)
     {
         return *this;
     }
 
-    subjects = new std::vector<Subject>(*ref.subjects);
+    subjects = new std::map<Subject, double>(*ref.subjects);
 
     return *this;
 }
 
-void Student::addSubject(const Subject &subject)
+void Student::addSubject(const Subject &subject, double grade)
 {
-    subjects->push_back(subject);
+    auto result = subjects->insert({subject, grade});
+
+    if (!result.second)
+    {
+        result.first->second = grade;
+    }
 }
 
-const std::vector<Subject> &Student::getSubjects() const
+const std::map<Subject, double> &Student::getSubjects() const
 {
     return *subjects;
+}
+
+double Student::getGrade(const Subject &subject) const
+{
+    auto it = subjects->find(subject);
+    return (it != subjects->end()) ? it->second : -1;
 }
 
 void Student::display() const
@@ -62,10 +70,12 @@ void Student::display() const
 
     if (!subjects->empty())
     {
-        std::cout << "Learns: ";
-        for (const Subject &subject : *subjects)
+        std::cout << "Subjects with Grades:" << std::endl;
+        for (const auto &entry : *subjects)
         {
-            std::cout << subject.getName() << " ";
+            const Subject &subject = entry.first;
+            double grade = entry.second;
+            std::cout << subject.getName() << ": " << grade << std::endl;
         }
         std::cout << std::endl;
     }

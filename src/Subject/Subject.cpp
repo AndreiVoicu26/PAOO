@@ -12,3 +12,8 @@ const std::string &Subject::getName() const
 {
     return name;
 }
+
+bool Subject::operator<(const Subject &other) const
+{
+    return name < other.name;
+}

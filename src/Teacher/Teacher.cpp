@@ -1,54 +1,50 @@
 #include <iostream>
 #include "Teacher.hpp"
-#include "../../Subject/Subject.hpp"
+#include "../Subject/Subject.hpp"
 #include "../Person/Person.hpp"
 using namespace SubjectNamespace;
 using namespace PeopleNamespace;
 
-Teacher::Teacher(const std::string &firstName, const std::string &lastName, int age, Subject *subject)
-    : Person(firstName, lastName, age)
+Teacher::Teacher(const std::string &firstName, const std::string &lastName, int age, const std::shared_ptr<Subject> &subject)
+    : Person(firstName, lastName, age), subject(subject)
 {
-    this->subject = new Subject(subject->getName());
 }
 
 Teacher::Teacher(const Teacher &copy)
 {
-    std::cout << "Copy Constructor called" << std::endl;
     firstName = copy.firstName;
     lastName = copy.lastName;
     age = copy.age;
-    subject = copy.subject;
+    this->subject = std::make_shared<Subject>(copy.subject->getName());
 }
 
 Teacher::Teacher(Teacher &&source)
 {
-    std::cout << "Move Constructor called" << std::endl;
     firstName = std::move(source.firstName);
     lastName = std::move(source.lastName);
     age = source.age;
-    subject = source.subject;
+    this->subject = (std::move(source.subject));
     source.subject = nullptr;
 }
 
 Teacher &Teacher::operator=(const Teacher &ref)
 {
-    std::cout << "Assignment Operator called" << std::endl;
     if (this == &ref)
     {
         return *this;
     }
 
-    subject = ref.subject;
+    subject = std::make_shared<Subject>(ref.subject->getName());
 
     return *this;
 }
 
 void Teacher::setSubject(Subject *subject)
 {
-    this->subject = subject;
+    this->subject = std::make_shared<Subject>(subject->getName());
 }
 
-const Subject *Teacher::getSubject() const
+const std::shared_ptr<Subject> Teacher::getSubject() const
 {
     return subject;
 }
@@ -62,15 +58,11 @@ void Teacher::display() const
 
     if (subject)
     {
-        std::cout << "Teaches: " << subject->getName() << std::endl;
+        std::cout << "Teaches: " << subject->getName() << std::endl
+                  << std::endl;
     }
     else
     {
         std::cout << "No subject assigned" << std::endl;
     }
-}
-
-Teacher::~Teacher()
-{
-    delete subject;
 }
